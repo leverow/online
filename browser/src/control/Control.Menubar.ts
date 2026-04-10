@@ -2525,6 +2525,9 @@ class Menubar extends window.L.Control {
        * @returns True if visible; otherwise false.
        */
 	private _checkItemVisibility(menuItem: any): boolean {
+		if (menuItem.id && this._map.uiManager?.hiddenMenuItems?.[menuItem.id]) {
+			return false;
+		}
 		if (window.ThisIsAMobileApp && menuItem.mobileapp === false) {
 			return false;
 		}
@@ -2584,6 +2587,9 @@ class Menubar extends window.L.Control {
 			return false;
 
 		if (menuItem.id === 'save' && this._map['wopi'].HideSaveOption)
+			return false;
+
+		if (menuItem.id === 'downloadas' && this._map['wopi'].HideExportOption)
 			return false;
 
 		if (menuItem.id && (menuItem.id === 'saveas' || menuItem.id.startsWith('saveas-')) && this._map['wopi'].UserCanNotWriteRelative)

@@ -39,6 +39,8 @@ window.L.Map.WOPI = window.L.Handler.extend({
 	EnableRemoteAIContent: false,
 	DisableAISettings: false,
 	EnableShare: false,
+	HideItems: [],
+	UIMode: '',
 	HideUserList: null,
 	CallPythonScriptSource: null,
 	SupportsRename: false,
@@ -184,6 +186,18 @@ window.L.Map.WOPI = window.L.Handler.extend({
 			this._map.saveAs(wopiInfo['TemplateSaveAs']);
 		}
 
+		this.HideItems = Array.isArray(wopiInfo['HideItems']) ? wopiInfo['HideItems'] : [];
+		this.UIMode = wopiInfo['UIMode'] || '';
+
+		// Pre-populate hidden dicts so rebuilds (e.g. after UIMode change) re-apply them
+		var uiManager = this._map.uiManager;
+		this.HideItems.forEach(function(id) {
+			uiManager.hiddenButtons[id] = true;
+			uiManager.hiddenMenuItems[id] = true;
+			var tabName = id.charAt(0).toUpperCase() + id.slice(1);
+			uiManager.hiddenTabs[tabName] = true;
+		});
+
 		this.setupImageInsertionMenu();
 	},
 
@@ -269,7 +283,21 @@ window.L.Map.WOPI = window.L.Handler.extend({
 		}
 
 		this._appLoaded = true;
+		this._applyWopiUISettings();
 		this.sendDocumentLoaded();
+	},
+
+	_applyWopiUISettings: function() {
+		var uiManager = this._map.uiManager;
+
+		// UIMode must be set before HideItems so rebuild from mode change
+		// triggers reapplyHiddenItems() which picks up the already-set hidden dicts
+		if (this.UIMode === 'classic' || this.UIMode === 'notebookbar') {
+			uiManager.onChangeUIMode({mode: this.UIMode, force: true});
+		}
+
+		// Apply to current DOM (hiddenDicts already populated in _setWopiProps)
+		uiManager.reapplyHiddenItems();
 	},
 
 	// Naturally we set a CSP to catch badness, but check here as well.
@@ -475,15 +503,31 @@ window.L.Map.WOPI = window.L.Handler.extend({
 				window.app.console.error('Property "Values.id" not set');
 				return;
 			}
+			var hide = msg.MessageId === 'Hide_Menu_Item';
+
+			// Persist across UI mode switches (e.g. edit→readonly recreates the menubar)
+			if (hide)
+				this._map.uiManager.hiddenMenuItems[msg.Values.id] = true;
+			else
+				delete this._map.uiManager.hiddenMenuItems[msg.Values.id];
+
+			// Apply to current UI
 			if (!this._map.menubar || !this._map.menubar.hasItem(msg.Values.id)) {
-				window.app.console.error('Menu item with id "' + msg.Values.id + '" not found.');
-				if (this._map.uiManager.getCurrentMode() === 'notebookbar') {
-					window.app.console.error('No menu items in notebookbar');
+				if (msg.Values.id === 'downloadas') {
+					// notebookbar renders downloadas as a button with this id
+					this._map.uiManager.showButton('downloadas:DownloadAsMenu', !hide);
+				} else if (this._map.uiManager.getCurrentMode() === 'notebookbar') {
+					// Notebookbar tab names are Title-cased ('File', 'Help', etc.)
+					// while postMessage ids are lowercase – normalise before passing.
+					var tabName = msg.Values.id.charAt(0).toUpperCase() + msg.Values.id.slice(1);
+					this._map.uiManager.showNotebookTab(tabName, !hide);
+				} else {
+					window.app.console.error('Menu item with id "' + msg.Values.id + '" not found.');
 				}
 				return;
 			}
 
-			if (msg.MessageId === 'Show_Menu_Item') {
+			if (!hide) {
 				if (!this._map.menubar.showItem(msg.Values.id)) {
 					window.app.console.error('Menu entry with id "' + msg.Values.id + '" not found.');
 				}

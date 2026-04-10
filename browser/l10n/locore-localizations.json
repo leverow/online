@@ -123,6 +123,8 @@
     "uk": "%SERVICE_ROOT%/browser/%VERSION%/l10n/locore/uk.json",
     "ur": "%SERVICE_ROOT%/browser/%VERSION%/l10n/locore/ur.json",
     "uz": "%SERVICE_ROOT%/browser/%VERSION%/l10n/locore/uz.json",
+    "uz-Latn": "%SERVICE_ROOT%/browser/%VERSION%/l10n/locore/uz-Latn.json",
+    "uz-cyrillic": "%SERVICE_ROOT%/browser/%VERSION%/l10n/locore/uz-cyrillic.json",
     "ve": "%SERVICE_ROOT%/browser/%VERSION%/l10n/locore/ve.json",
     "vec": "%SERVICE_ROOT%/browser/%VERSION%/l10n/locore/vec.json",
     "vi": "%SERVICE_ROOT%/browser/%VERSION%/l10n/locore/vi.json",

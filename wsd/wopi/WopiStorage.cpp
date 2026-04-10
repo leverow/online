@@ -242,6 +242,13 @@ WopiStorage::WOPIFileInfo::WOPIFileInfo(const FileInfo& fileInfo, Poco::JSON::Ob
     JsonUtil::findJSONValue(object, "UserCanOnlyComment", _userCanOnlyComment);
     JsonUtil::findJSONValue(object, "UserCanOnlyManageRedlines", _userCanOnlyManageRedlines);
     JsonUtil::findJSONValue(object, "PresentationLeader", _presentationLeader);
+    if (auto hideItemsArray = object->getArray("HideItems"))
+    {
+        std::ostringstream oss;
+        hideItemsArray->stringify(oss);
+        _hideItems = oss.str();
+    }
+    JsonUtil::findJSONValue(object, "UIMode", _uiMode);
 
     // check if user is admin on the integrator side
     bool isAdminUser = false;

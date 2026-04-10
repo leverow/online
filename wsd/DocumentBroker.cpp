@@ -1506,6 +1506,22 @@ DocumentBroker::updateSessionWithWopiInfo(const std::shared_ptr<ClientSession>& 
     if (!wopiFileInfo->getPresentationLeader().empty())
         wopiInfo->set("PresentationLeader", wopiFileInfo->getPresentationLeader());
 
+    if (!wopiFileInfo->getHideItems().empty())
+    {
+        try
+        {
+            Poco::JSON::Parser parser;
+            Poco::Dynamic::Var parsed = parser.parse(wopiFileInfo->getHideItems());
+            wopiInfo->set("HideItems", parsed.extract<Poco::JSON::Array::Ptr>());
+        }
+        catch (const Poco::Exception& exc)
+        {
+            LOG_ERR("Failed to parse HideItems JSON: " << exc.displayText());
+        }
+    }
+    if (!wopiFileInfo->getUIMode().empty())
+        wopiInfo->set("UIMode", wopiFileInfo->getUIMode());
+
     bool disablePresentation = wopiFileInfo->getDisableExport() || wopiFileInfo->getHideExportOption();
     // the new slideshow supports watermarking, anyway it's still an experimental features
     disablePresentation = disablePresentation || (!ConfigUtil::getBool("canvas_slideshow_enabled", true) && !watermarkText.empty());

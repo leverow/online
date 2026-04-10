@@ -84,6 +84,8 @@ public:
         bool getEnableRemoteAIContent() const { return _enableRemoteAIContent; }
         bool getDisableAISettings() const { return _disableAISettings; }
         bool getEnableShare() const { return _enableShare; }
+        const std::string& getHideItems() const { return _hideItems; }
+        const std::string& getUIMode() const { return _uiMode; }
         bool getSupportsRename() const { return _supportsRename; }
         bool getSupportsLocks() const { return _supportsLocks; }
         bool getUserCanRename() const { return _userCanRename; }
@@ -190,6 +192,10 @@ public:
         bool _userCanOnlyManageRedlines = false;
         /// Used for directly starting follow me presentation
         std::string _presentationLeader;
+        /// JSON array of UI element IDs to hide (e.g. ["file","help","navigator"])
+        std::string _hideItems;
+        /// UI mode to apply on load: "classic" or "notebookbar"
+        std::string _uiMode;
     };
 
     WopiStorage(const Poco::URI& uri, const std::string& localStorePath,

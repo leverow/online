@@ -75,6 +75,8 @@
     "ug": "%SERVICE_ROOT%/browser/%VERSION%/l10n/ui-ug.json",
     "uk": "%SERVICE_ROOT%/browser/%VERSION%/l10n/ui-uk.json",
     "uz": "%SERVICE_ROOT%/browser/%VERSION%/l10n/ui-uz.json",
+    "uz-Latn": "%SERVICE_ROOT%/browser/%VERSION%/l10n/ui-uz.json",
+    "uz-cyrillic": "%SERVICE_ROOT%/browser/%VERSION%/l10n/ui-uz.json",
     "vec": "%SERVICE_ROOT%/browser/%VERSION%/l10n/ui-vec.json",
     "vi": "%SERVICE_ROOT%/browser/%VERSION%/l10n/ui-vi.json",
     "zh-cn": "%SERVICE_ROOT%/browser/%VERSION%/l10n/ui-zh_CN.json",

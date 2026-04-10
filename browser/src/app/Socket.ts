@@ -399,10 +399,8 @@ class Socket {
 			};
 			msg += ' options=' + JSON.stringify(options);
 		}
-		const spellOnline = window.prefs.get('spellOnline');
-		if (spellOnline) {
-			msg += ' spellOnline=' + spellOnline;
-		}
+		const spellOnline = window.prefs.get('spellOnline') ?? 'false';
+		msg += ' spellOnline=' + spellOnline;
 
 		const darkTheme = window.prefs.getBoolean('darkTheme');
 		msg += ' darkTheme=' + darkTheme;

@@ -50,6 +50,8 @@ class UIManager extends window.L.Control {
 	hiddenCommands: { [key: string]: boolean } = {};
 	// Hidden Notebookbar tabs.
 	hiddenTabs: { [key: string]: boolean } = {};
+	// Hidden menu items (persisted across UI mode switches).
+	hiddenMenuItems: { [key: string]: boolean } = {};
 	permissionViewMode?: PermissionViewMode;
 
 	/**
@@ -921,9 +923,19 @@ class UIManager extends window.L.Control {
 			this.notebookbar.showTabs();
 			$('#map').addClass('notebookbar-opened');
 			this.insertCustomButtons();
+			this.reapplyHiddenItems();
 			this.map.sendInitNotebookbarCommands();
 			if (this.map.getDocType() === 'presentation')
 				this.map.fire('toggleslidehide');
+	}
+
+	reapplyHiddenItems(): void {
+		for (var id in this.hiddenButtons) {
+			this.showButton(id, false);
+		}
+		for (var tabName in this.hiddenTabs) {
+			this.showNotebookTab(tabName, false);
+		}
 	}
 
 	/**
